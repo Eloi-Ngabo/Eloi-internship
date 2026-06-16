@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import OwlCarousel from 'react-owl-carousel';
-
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
-
-
-
 
 const HotCollections = () => {
   const { id } = useParams();
@@ -18,13 +14,14 @@ const HotCollections = () => {
     async function fetchHotCollections() {
      const {data} = await axios.get(`https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections?userId=${id}`)
     setPosts(data); 
-    console.log(data) 
+    console.log(data)
     }
    fetchHotCollections()
   },[]);
 
 
   return (
+    
     <section id="section-collections" className="no-bottom">
       <div className="container">
         <div className="row">
@@ -34,9 +31,9 @@ const HotCollections = () => {
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
-        <OwlCarousel  loop margin={10} nav>  
+       <OwlCarousel className='owl-theme' loop margin={10} nav>
           {posts.map((post, index) => (
-            <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={index}>
+            <div className="col-lg-3 w-100 col-md-6 col-sm-6 col-xs-12" key={index}>
               <div className="nft_coll">
                 <div className="nft_wrap">
                   <Link to="/item-details">
@@ -58,11 +55,12 @@ const HotCollections = () => {
               </div>
             </div>
           ))}
-          </OwlCarousel>
+        </OwlCarousel>
         </div>
       </div>
     </section>
+    
   );
 };
 
-export default HotCollections;
+export default HotCollections

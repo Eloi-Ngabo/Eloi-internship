@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import OwlCarousel from 'react-owl-carousel';
+import 'owl.carousel/dist/assets/owl.carousel.css';
+import 'owl.carousel/dist/assets/owl.theme.default.css';
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
@@ -7,21 +9,31 @@ import nftImage from "../../images/nftImage.jpg";
 
 const HotCollections = () => {
   const { id } = useParams();
-  const [posts, setPosts] = useState ([])
- 
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     async function fetchHotCollections() {
-     const {data} = await axios.get(`https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections?userId=${id}`)
-    setPosts(data); 
-    console.log(data)
+      const { data } = await axios.get(
+        `https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections?userId=${id}`
+      );
+      setPosts(data);
     }
-   fetchHotCollections()
-  },[]);
+    fetchHotCollections();
+  }, []);
 
+  const options = {
+    loop: true,
+    margin: 10,
+    nav: true,
+    responsive: {
+      0:    { items: 1 },
+      576:  { items: 2 },
+      768:  { items: 3 },
+      1024: { items: 4 },
+    },
+  };
 
   return (
-    
     <section id="section-collections" className="no-bottom">
       <div className="container">
         <div className="row">
@@ -31,36 +43,37 @@ const HotCollections = () => {
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
-       <OwlCarousel className='owl-theme' loop margin={10} nav>
-          {posts.map((post, index) => (
-            <div className="col-lg-3 w-100 col-md-6 col-sm-6 col-xs-12" key={index}>
-              <div className="nft_coll">
-                <div className="nft_wrap">
-                  <Link to="/item-details">
-                    <img src={post.nftImage} className="lazy img-fluid" alt="" />
-                  </Link>
+
+          <div className="col-lg-12">
+            <OwlCarousel className="owl-theme" {...options}>
+              {posts.map((post, index) => (
+               
+                <div className="nft_coll" key={index}>
+                  <div className="nft_wrap">
+                    <Link to="/item-details">
+                      <img src={post.nftImage} className="lazy img-fluid" alt="" />
+                    </Link>
+                  </div>
+                  <div className="nft_coll_pp">
+                    <Link to="/author">
+                      <img className="lazy pp-coll" src={post.authorImage} alt="" />
+                    </Link>
+                    <i className="fa fa-check"></i>
+                  </div>
+                  <div className="nft_coll_info">
+                    <Link to="/explore">
+                      <h4>{post.title}</h4>
+                    </Link>
+                    <span>{post.code}</span>
+                  </div>
                 </div>
-                <div className="nft_coll_pp">
-                  <Link to="/author">
-                    <img className="lazy pp-coll" src={post.authorImage} alt="" />
-                  </Link>
-                  <i className="fa fa-check"></i>
-                </div>
-                <div className="nft_coll_info">
-                  <Link to="/explore">
-                    <h4>{post.title}</h4>
-                  </Link>
-                  <span>{post.code}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </OwlCarousel>
+              ))}
+            </OwlCarousel>
+          </div>
         </div>
       </div>
     </section>
-    
   );
 };
 
-export default HotCollections
+export default HotCollections;

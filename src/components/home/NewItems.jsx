@@ -48,7 +48,7 @@ const NewItems = () => {
                       </div>
                     </div>
                   </div>
-
+                  // Does this work?
                   <Link to="/item-details">
                     <img
                       src={nftImage}

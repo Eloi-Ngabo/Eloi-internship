@@ -90,6 +90,7 @@ const NewItems = () => {
 
             {loading ? (
               <>
+                {/* Renders 4 columns matching the desktop layout grid */}
                 {new Array(4).fill(0).map((_, index) => (
                   <div
                     className="col-lg-3 col-md-6 col-sm-12"

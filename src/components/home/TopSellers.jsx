@@ -24,6 +24,7 @@ const TopSellers = () => {
                         src={AuthorImage}
                         alt=""
                       />
+                     // does this working
                       <i className="fa fa-check"></i>
                     </Link>
                   </div>

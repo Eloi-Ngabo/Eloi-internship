@@ -247,22 +247,18 @@ const NewItems = () => {
                   {posts.map((post, index) => (
                     <div className="nft__item" key={index}>
                       <div className="author_list_pp">
-                        {/* Fixed to template literal using post.authorId */}
+
                         <Link
-                          to={`/author/${post.authorId}`}
+                          to="/author"
                           data-bs-toggle="tooltip"
                           data-bs-placement="top"
-                          title={`Creator: ${post.title}`}
+                          title="Creator: Monica Lucas"
                         >
                           <img className="lazy" src={post.authorImage || AuthorImage} alt="" />
                           <i className="fa fa-check"></i>
                         </Link>
                       </div>
-                      
-                      {/* FIXED: Removed the text wrapper so the component actually renders */}
                       <Countdown expiryDate={post.expiryDate} />
-                       {/* <div className="de_countdown">5h 30m 32s</div> */}
-
                       <div className="nft__item_wrap">
                         <div className="nft__item_extra">
                           <div className="nft__item_buttons">
@@ -281,9 +277,7 @@ const NewItems = () => {
                             </div>
                           </div>
                         </div>
-
-                        {/* Fixed to template literal using post.nftId */}
-                        <Link to={`/item-details/${post.nftId}`}>
+                        <Link to="/item-details">
                           <img
                             src={post.nftImage || nftImage}
                             className="lazy nft__item_preview"
@@ -292,7 +286,6 @@ const NewItems = () => {
                         </Link>
                       </div>
                       <div className="nft__item_info">
-                        {/* Fixed to template literal using post.nftId */}
                         <Link to="/item-details">
                           <h4>{post.title}</h4>
                         </Link>

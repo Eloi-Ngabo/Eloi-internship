@@ -1,79 +1,175 @@
-import React from "react";
-import { Link } from "react-router-dom";
+
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import OwlCarousel from "react-owl-carousel";
+import "owl.carousel/dist/assets/owl.carousel.css";
+import "owl.carousel/dist/assets/owl.theme.default.css";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
+import axios from "axios";
 
+// --- SUB-COMPONENT FOR OPTIMIZED COUNTDOWN ---
+const Countdown = ({ expiryDate }) => {
+  const [timeLeft, setTimeLeft] = useState("");
+
+  useEffect(() => {
+    if (!expiryDate) return;
+
+    const calculateTime = () => {
+      const difference = new Date(expiryDate) - new Date();
+
+      if (difference <= 0) {
+        setTimeLeft("Expired");
+        return;
+      }
+
+      const hours = Math.floor(difference / (1000 * 60 * 60));
+      const minutes = Math.floor((difference / 1000 / 60) % 60);
+      const seconds = Math.floor((difference / 1000) % 60);
+
+      setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+    };
+
+    calculateTime(); // Run instantly on mount
+    const interval = setInterval(calculateTime, 1000);
+
+    return () => clearInterval(interval);
+  }, [expiryDate]);
+
+  // If there's no expiry date, don't render the countdown badge
+  if (!expiryDate || timeLeft === "Expired") return null;
+
+  return <div className="de_countdown">{timeLeft}</div>;
+};
+
+// --- MAIN NEW ITEMS COMPONENT ---
 const NewItems = () => {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { id } = useParams();
+
+  useEffect(() => {
+    async function fetchNewItems() {
+      
+        // Appended user ID condition safely if it exists, otherwise calls base API
+        const url = id 
+          ? `https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems?userId=${id}`
+          : `https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems`;
+
+        const { data } = await axios.get(url);
+        setPosts(data);
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
+    }
+    fetchNewItems();
+  }, [id]);
+
+  const options = {
+    loop: true,
+    margin: 10,
+    nav: true,
+    responsive: {
+      0: { items: 1 },
+      576: { items: 2 },
+      768: { items: 3 },
+      1024: { items: 4 }, // Handles the 4 items layout cleanly
+    },
+  };
+
   return (
-    <section id="section-items" className="no-bottom">
-      <div className="container">
-        <div className="row">
-          <div className="col-lg-12">
-            <div className="text-center">
-              <h2>New Items</h2>
-              <div className="small-border bg-color-2"></div>
-            </div>
-          </div>
-          {new Array(4).fill(0).map((_, index) => (
-            <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={index}>
-              <div className="nft__item">
-                <div className="author_list_pp">
-                  <Link
-                    to="/author"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Creator: Monica Lucas"
-                  >
-                    <img className="lazy" src={AuthorImage} alt="" />
-                    <i className="fa fa-check"></i>
-                  </Link>
-                </div>
-                <div className="de_countdown">5h 30m 32s</div>
-
-                <div className="nft__item_wrap">
-                  <div className="nft__item_extra">
-                    <div className="nft__item_buttons">
-                      <button>Buy Now</button>
-                      <div className="nft__item_share">
-                        <h4>Share</h4>
-                        <a href="" target="_blank" rel="noreferrer">
-                          <i className="fa fa-facebook fa-lg"></i>
-                        </a>
-                        <a href="" target="_blank" rel="noreferrer">
-                          <i className="fa fa-twitter fa-lg"></i>
-                        </a>
-                        <a href="">
-                          <i className="fa fa-envelope fa-lg"></i>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Link to="/item-details">
-                    <img
-                      src={nftImage}
-                      className="lazy nft__item_preview"
-                      alt=""
-                    />
-                  </Link>
-                </div>
-                <div className="nft__item_info">
-                  <Link to="/item-details">
-                    <h4>Pinky Ocean</h4>
-                  </Link>
-                  <div className="nft__item_price">3.08 ETH</div>
-                  <div className="nft__item_like">
-                    <i className="fa fa-heart"></i>
-                    <span>69</span>
-                  </div>
-                </div>
+    <>
+      <section id="section-items" className="no-bottom">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-12">
+              <div className="text-center">
+                <h2>New Items</h2>
+                <div className="small-border bg-color-2"></div>
               </div>
             </div>
-          ))}
+            {loading ? (
+              <>
+                {new Array(4).fill(0).map((_, index) => (
+                  <div className="col-lg-3 " key={index}>
+                    <div
+                      className="skeleton-box"
+                      style={{
+                        width: "100%",
+                        height: "300px",
+                        borderRadius: "12px",
+                      }}
+                    ></div>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <div className="col-lg-12">
+                <OwlCarousel className="owl-theme" {...options}>
+                  {posts.map((post, index) => (
+                    <div className="nft__item" key={index}>
+                      <div className="author_list_pp">
+                        {/* Fixed to template literal using post.authorId */}
+                        <Link
+                          to={`/author/${post.authorId}`}
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          title={`Creator: ${post.title}`}
+                        >
+                          <img className="lazy" src={post.authorImage || AuthorImage} alt="" />
+                          <i className="fa fa-check"></i>
+                        </Link>
+                      </div>
+                      <Countdown expiryDate={post.expiryDate} />
+                      <div className="nft__item_wrap">
+                        <div className="nft__item_extra">
+                          <div className="nft__item_buttons">
+                            <button>Buy Now</button>
+                            <div className="nft__item_share">
+                              <h4>Share</h4>
+                              <a href="" target="_blank" rel="noreferrer">
+                                <i className="fa fa-facebook fa-lg"></i>
+                              </a>
+                              <a href="" target="_blank" rel="noreferrer">
+                                <i className="fa fa-twitter fa-lg"></i>
+                              </a>
+                              <a href="">
+                                <i className="fa fa-envelope fa-lg"></i>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+
+                        <Link to={`/item-details/${post.nftId}`}>
+                          <img
+                            src={post.nftImage || nftImage}
+                            className="lazy nft__item_preview"
+                            alt=""
+                          />
+                        </Link>
+                      </div>
+                      <div className="nft__item_info">
+                        
+                        <Link to={`/item-details/${post.nftId}`}>
+                          <h4>{post.title}</h4>
+                        </Link>
+                        <div className="nft__item_price">{post.price}</div>
+                        <div className="nft__item_like">
+                          <i className="fa fa-heart"></i>
+                          <span>{post.likes}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </OwlCarousel>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
+  
 };
 
 export default NewItems;

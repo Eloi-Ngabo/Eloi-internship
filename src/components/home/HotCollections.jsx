@@ -49,8 +49,8 @@ const HotCollections = () => {
             </div>
             {loading ? (
               <>
-                {[1, 2, 3, 4].map((item) => (
-                  <div className="col-lg-3 col-md-6 col-sm-12" key={item}>
+                {new Array(4).fill(0).map(index => (
+                  <div className="col-lg-3 col-md-6 col-sm-12" key={index}>
                     <div
                       className="skeleton-box"
                       style={{

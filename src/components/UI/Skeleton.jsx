@@ -8,7 +8,7 @@ const Skeleton = ({ width, height, borderRadius }) => {
       style={{
         width: '300px',
         height: '100px',
-        borderRadius: '8px'
+        borderRadius: '12px'
       }}
     ></div>
   );

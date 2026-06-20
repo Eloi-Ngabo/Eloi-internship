@@ -49,7 +49,7 @@ const HotCollections = () => {
 
           {loading ? (
             <>
-              {/* Renders 4 columns matching the desktop layout items */}
+              
               {new Array(4).fill(0).map((_, index) => (
                 <div
                   className="col-lg-3 col-md-6 col-sm-12"
@@ -61,7 +61,7 @@ const HotCollections = () => {
                         className="skeleton-loading"
                         style={{
                           width: "100%",
-                          height: "200px", // Standard height for NFT preview card
+                          height: "200px", 
                           borderRadius: "8px",
                           backgroundColor: "#eee",
                         }}
@@ -95,7 +95,7 @@ const HotCollections = () => {
                           margin: "0 auto 8px auto",
                         }}
                       ></div>
-                      {/* Code/Token standard Line */}
+                      
                       <div
                         className="skeleton-loading"
                         style={{

@@ -82,7 +82,7 @@ const ExploreItems = () => {
 
   const sortedPosts = getSortedPosts();
   // Slice array from index 0 up to your visible state limit
-  const displayedPosts = sortedPosts.slice(0, visibleItems);
+  const Posts = sortedPosts.slice(0, visibleItems);
 
   return (
     <>
@@ -174,7 +174,7 @@ const ExploreItems = () => {
       ) : (
         
         /* 2. ACTUAL POSTS DATA STATE (Iterates through filtered & sliced elements) */
-        displayedPosts.map((post, index) => (
+        Posts.map((post, index) => (
           <div
             key={post.id || index}
             className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12"

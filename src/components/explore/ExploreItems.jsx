@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
+import axios from "axios";
 
 const ExploreItems = () => {
+
   return (
     <>
       <div>
@@ -32,7 +34,7 @@ const ExploreItems = () => {
               </Link>
             </div>
             <div className="de_countdown">5h 30m 32s</div>
-
+             //does this work
             <div className="nft__item_wrap">
               <div className="nft__item_extra">
                 <div className="nft__item_buttons">

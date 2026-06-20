@@ -7,6 +7,7 @@ import { Link, useParams} from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
 
+
 const HotCollections = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);

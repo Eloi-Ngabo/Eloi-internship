@@ -3,7 +3,7 @@ import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams} from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
 
@@ -11,23 +11,17 @@ import nftImage from "../../images/nftImage.jpg";
 const HotCollections = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { id } = useParams(); // Fixed: Added parentheses to properly invoke the hook
+  const { id } = useParams();
 
   useEffect(() => {
     async function fetchHotCollections() {
-      try {
-        setLoading(true);
         const { data } = await axios.get(
           `https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections?userId=${id}`,
         );
         setPosts(data);
-      } catch (error) {
-        console.error("Error fetching hot collections:", error);
-      } finally {
         setTimeout(() => {
           setLoading(false);
         }, 3000);
-      }
     }
     fetchHotCollections();
   }, [id]);
@@ -56,7 +50,7 @@ const HotCollections = () => {
 
           {loading ? (
             <>
-              {/* Renders 4 columns matching the desktop layout items */}
+              
               {new Array(4).fill(0).map((_, index) => (
                 <div
                   className="col-lg-3 col-md-6 col-sm-12"
@@ -68,7 +62,7 @@ const HotCollections = () => {
                         className="skeleton-loading"
                         style={{
                           width: "100%",
-                          height: "200px", // Standard height for NFT preview card
+                          height: "200px", 
                           borderRadius: "8px",
                           backgroundColor: "#eee",
                         }}
@@ -102,7 +96,7 @@ const HotCollections = () => {
                           margin: "0 auto 8px auto",
                         }}
                       ></div>
-                      {/* Code/Token standard Line */}
+                      
                       <div
                         className="skeleton-loading"
                         style={{
@@ -125,7 +119,7 @@ const HotCollections = () => {
                   {posts.map((post, index) => (
                     <div className="nft_coll" key={post.id || index}>
                       <div className="nft_wrap">
-                        <Link to={`/item-details/${post.nftId || ""}`}>
+                        <Link to={`/item-details/${post.nftId || id}`}>
                           <img
                             src={post.nftImage}
                             className="lazy img-fluid"
@@ -162,3 +156,4 @@ const HotCollections = () => {
 };
 
 export default HotCollections;
+

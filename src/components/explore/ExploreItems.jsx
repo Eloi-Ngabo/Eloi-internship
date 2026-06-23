@@ -183,7 +183,7 @@ const ExploreItems = () => {
             <div className="nft__item">
               <div className="author_list_pp">
                 <Link
-                  to={`/author/${post.nftId}`}
+                  to={`/author/${post.authorId || id}`}
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                 >

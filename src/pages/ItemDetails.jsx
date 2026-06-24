@@ -13,21 +13,8 @@ const ItemDetails = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    async function fetchItemDetails() {
-      try {
-        const response = await axios.get(`https://us-central1-nft-cloud-functions.cloudfunctions.net/itemDetails?nftId=${id}`);
-        setPost(response.data);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000); 
-      } catch (error) {
-        console.error("Error fetching item details:", error);
-        setLoading(false);
-      }
-    }
-    fetchItemDetails();
-  }, [id]); // Added id dependency array
-
+  }, []);
+//does this work
   return (
     <div id="wrapper">
       <div className="no-bottom no-top" id="content">

@@ -3,6 +3,10 @@ import { Link, useParams } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
 import axios from "axios";
+import AOS from "aos";
+import "aos/dist/aos.css";
+
+
 
 const Countdown = ({ expiryDate }) => {
   const [timeLeft, setTimeLeft] = useState("");
@@ -25,50 +29,62 @@ const Countdown = ({ expiryDate }) => {
       setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
     };
 
-    calculateTime(); // Run instantly on mount
+    calculateTime();
     const interval = setInterval(calculateTime, 1000);
 
     return () => clearInterval(interval);
   }, [expiryDate]);
 
-  // If there's no expiry date, don't render the countdown badge
   if (!expiryDate || timeLeft === "Expired") return null;
 
   return <div className="de_countdown">{timeLeft}</div>;
 };
 
 
+
+
+// --- MAIN EXPLORE ITEMS COMPONENT ---
 const ExploreItems = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
 
-  // --- NEW STATES FOR FILTERING AND PAGINATION ---
   const [filter, setFilter] = useState("");
   const [visibleItems, setVisibleItems] = useState(8);
 
+  // Initialize AOS when the component mounts
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: true,
+    });
+  }, []);
+
+  // Refresh animations when changing filter options or loading more items
+  useEffect(() => {
+    if (!loading) {
+      AOS.refresh();
+    }
+  }, [filter, visibleItems, loading]);
+
   useEffect(() => {
     async function fetchExploreItems() {
-        const response = await axios.get(`https://us-central1-nft-cloud-functions.cloudfunctions.net/explore?userId=${id}`);
-        setPosts(response.data);
-        setTimeout(() => {
-          setLoading(false);
-        }, 3000);
+      const response = await axios.get(`https://us-central1-nft-cloud-functions.cloudfunctions.net/explore?userId=${id}`);
+      setPosts(response.data);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000); // Optimized fake delay for smooth transition pacing
     }
     fetchExploreItems();
   }, [id]);
 
-  // Handle Load More clicks
   const handleLoadMore = (e) => {
-    e.preventDefault(); // Prevents empty Link routing behavior
-    setVisibleItems((prevValue) => prevValue + 4); // Loads 4 more items on each click
+    e.preventDefault();
+    setVisibleItems((prevValue) => prevValue + 4);
   };
 
-  // --- FILTER & SORT LOGIC ---
-  // Create a processed copy of your posts based on the dropdown selection
   const getSortedPosts = () => {
-    let sorted = [...posts]; // Clone array to avoid mutating source state
-
+    let sorted = [...posts];
     if (filter === "price_low_to_high") {
       sorted.sort((a, b) => a.price - b.price);
     } else if (filter === "price_high_to_low") {
@@ -76,18 +92,16 @@ const ExploreItems = () => {
     } else if (filter === "likes_high_to_low") {
       sorted.sort((a, b) => b.likes - a.likes);
     }
-    
     return sorted;
   };
 
   const sortedPosts = getSortedPosts();
-  // Slice array from index 0 up to your visible state limit
   const Posts = sortedPosts.slice(0, visibleItems);
 
   return (
     <>
-      <div>
-        {/* Filter event handler tied to select element */}
+      {/* Filter Dropdown - Added fade-up animation */}
+      <div data-aos="fade-up">
         <select 
           id="filter-items" 
           value={filter} 
@@ -172,13 +186,13 @@ const ExploreItems = () => {
           </div>
         ))
       ) : (
-        
-        /* 2. ACTUAL POSTS DATA STATE (Iterates through filtered & sliced elements) */
+        /* 2. ACTUAL POSTS DATA STATE */
         Posts.map((post, index) => (
           <div
             key={post.id || index}
             className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12"
             style={{ display: "block", backgroundSize: "cover" }}
+            data-aos="fade-in" // Added clean fade-in animation per grid card
           >
             <div className="nft__item">
               <div className="author_list_pp">
@@ -232,9 +246,8 @@ const ExploreItems = () => {
       )}
 
       {/* 3. DYNAMIC LOAD MORE ACTIONS */}
-      {/* Button only renders if there are more items left to display and we aren't loading */}
       {!loading && visibleItems < posts.length && (
-        <div className="col-md-12 text-center">
+        <div className="col-md-12 text-center" data-aos="fade-up"> {/* Added fade-up action entry */}
           <Link to="" id="loadmore" className="btn-main lead" onClick={handleLoadMore}>
             Load more
           </Link>
@@ -242,7 +255,7 @@ const ExploreItems = () => {
       )}
     </>
   );
-
-}
+};
 
 export default ExploreItems;
+

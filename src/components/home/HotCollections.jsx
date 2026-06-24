@@ -3,9 +3,11 @@ import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import axios from "axios";
-import { Link, useParams} from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 
 const HotCollections = () => {
@@ -14,14 +16,22 @@ const HotCollections = () => {
   const { id } = useParams();
 
   useEffect(() => {
+    // Initialize AOS when the component mounts
+    AOS.init({
+      duration: 1000,
+      once: true,
+    });
+  }, []);
+
+  useEffect(() => {
     async function fetchHotCollections() {
-        const { data } = await axios.get(
-          `https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections?userId=${id}`,
-        );
-        setPosts(data);
-        setTimeout(() => {
-          setLoading(false);
-        }, 3000);
+      const { data } = await axios.get(
+        `https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections?userId=${id}`,
+      );
+      setPosts(data);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000); // Slightly reduced timeout for snappy UX
     }
     fetchHotCollections();
   }, [id]);
@@ -37,12 +47,14 @@ const HotCollections = () => {
       1024: { items: 4 },
     },
   };
+
   return (
     <section id="section-collections" className="no-bottom">
       <div className="container">
         <div className="row">
           <div className="col-lg-12">
-            <div className="text-center">
+            {/* Added fade-up to the title section */}
+            <div className="text-center" data-aos="fade-up">
               <h2>Hot Collections</h2>
               <div className="small-border bg-color-2"></div>
             </div>
@@ -50,7 +62,6 @@ const HotCollections = () => {
 
           {loading ? (
             <>
-              
               {new Array(4).fill(0).map((_, index) => (
                 <div
                   className="col-lg-3 col-md-6 col-sm-12"
@@ -62,7 +73,7 @@ const HotCollections = () => {
                         className="skeleton-loading"
                         style={{
                           width: "100%",
-                          height: "200px", 
+                          height: "200px",
                           borderRadius: "8px",
                           backgroundColor: "#eee",
                         }}
@@ -96,7 +107,7 @@ const HotCollections = () => {
                           margin: "0 auto 8px auto",
                         }}
                       ></div>
-                      
+
                       <div
                         className="skeleton-loading"
                         style={{
@@ -113,7 +124,8 @@ const HotCollections = () => {
               ))}
             </>
           ) : (
-            <div className="col-lg-12">
+            /* Added fade-up directly to the carousel container for an elegant, flawless entry */
+            <div className="col-lg-12" data-aos="fade-up" data-aos-delay="200">
               {posts.length > 0 && (
                 <OwlCarousel className="owl-theme" {...options}>
                   {posts.map((post, index) => (
@@ -156,4 +168,3 @@ const HotCollections = () => {
 };
 
 export default HotCollections;
-

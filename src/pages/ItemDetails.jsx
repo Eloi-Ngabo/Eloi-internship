@@ -13,8 +13,22 @@ const ItemDetails = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
-//does this work
+async function fetchItemDetails() {
+      try {
+        const response = await axios.get(`https://us-central1-nft-cloud-functions.cloudfunctions.net/itemDetails?nftId=${id}`);
+        setPost(response.data);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000); 
+      } catch (error) {
+        console.error("Error fetching item details:", error);
+        setLoading(false);
+      }
+    }
+    fetchItemDetails();
+  }, [id]); // Added id dependency array
+
+
   return (
     <div id="wrapper">
       <div className="no-bottom no-top" id="content">
@@ -49,7 +63,7 @@ const ItemDetails = () => {
                 <div className="row">
                   <div className="col-md-6 text-center">
                     <img
-                      src={post.nftImage}
+                      src={nftImage}
                       className="img-fluid img-rounded mb-sm-30 nft-image"
                       alt=""
                     />
@@ -106,7 +120,7 @@ const ItemDetails = () => {
                         <div className="spacer-40"></div>
                         <h6>Price</h6>
                         <div className="nft-item-price">
-                          <img src={post.EthImage} alt="" />
+                          <img src={EthImage} alt="" />
                           <span>{post.price}</span>
                         </div>
                       </div>

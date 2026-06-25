@@ -6,12 +6,29 @@ import axios from "axios";
 import { Link, useParams} from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 
 const HotCollections = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
+
+  // 2. Initialize AOS when the component mounts
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // Animation speed
+      once: false,    
+    });
+  }, []);
+
+  // 3. Refresh AOS calculations whenever the DOM updates out of the loading state
+  useEffect(() => {
+    if (!loading) {
+      AOS.refresh();
+    }
+  }, [loading]);
 
   useEffect(() => {
     async function fetchHotCollections() {
@@ -37,11 +54,13 @@ const HotCollections = () => {
       1024: { items: 4 },
     },
   };
+
   return (
     <section id="section-collections" className="no-bottom">
       <div className="container">
         <div className="row">
-          <div className="col-lg-12">
+          {/* 4. Added AOS fade-up to the section header */}
+          <div className="col-lg-12" data-aos="fade-up">
             <div className="text-center">
               <h2>Hot Collections</h2>
               <div className="small-border bg-color-2"></div>
@@ -50,7 +69,6 @@ const HotCollections = () => {
 
           {loading ? (
             <>
-              
               {new Array(4).fill(0).map((_, index) => (
                 <div
                   className="col-lg-3 col-md-6 col-sm-12"
@@ -113,7 +131,8 @@ const HotCollections = () => {
               ))}
             </>
           ) : (
-            <div className="col-lg-12">
+            /* 5. Added AOS fade-up properties to the carousel wrapper div */
+            <div className="col-lg-12" data-aos="fade-up" data-aos-delay="150">
               {posts.length > 0 && (
                 <OwlCarousel className="owl-theme" {...options}>
                   {posts.map((post, index) => (
@@ -121,7 +140,7 @@ const HotCollections = () => {
                       <div className="nft_wrap">
                         <Link to={`/item-details/${post.nftId || id}`}>
                           <img
-                            src={post.nftImage}
+                            src={ post.nftImage || nftImage }
                             className="lazy img-fluid"
                             alt={post.title || "NFT Image"}
                           />
@@ -131,7 +150,7 @@ const HotCollections = () => {
                         <Link to={`/author/${post.authorId || id}`}>
                           <img
                             className="lazy pp-coll"
-                            src={post.authorImage}
+                            src={post.authorImage || AuthorImage }
                             alt=""
                           />
                         </Link>
@@ -156,4 +175,3 @@ const HotCollections = () => {
 };
 
 export default HotCollections;
-

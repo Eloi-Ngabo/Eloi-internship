@@ -2,12 +2,28 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import axios from "axios";
-
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const TopSellers = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
+
+  // 2. Initialize AOS when the component mounts
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // Animation speed
+      once: true,     // Animate only once while scrolling down
+    });
+  }, []);
+
+  // 3. Refresh AOS calculations when loading is complete
+  useEffect(() => {
+    if (!loading) {
+      AOS.refresh();
+    }
+  }, [loading]);
 
   useEffect(() => {
     async function fetchTopSellers() {
@@ -26,13 +42,16 @@ const TopSellers = () => {
     <section id="section-popular" className="pb-5">
       <div className="container">
         <div className="row">
-          <div className="col-lg-12">
+          {/* 4. Added AOS fade-up to the section header */}
+          <div className="col-lg-12" data-aos="fade-up">
             <div className="text-center">
               <h2>Top Sellers</h2>
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
-          <div className="col-md-12">
+          
+          {/* 5. Added AOS fade-up properties to the main list container wrapper */}
+          <div className="col-md-12" data-aos="fade-up" data-aos-delay="150">
             <ol className="author_list">
               {loading
                 ? new Array(12).fill(0).map((_, index) => (
@@ -98,3 +117,5 @@ const TopSellers = () => {
 };
 
 export default TopSellers;
+
+

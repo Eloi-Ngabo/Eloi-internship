@@ -6,6 +6,8 @@ import "owl.carousel/dist/assets/owl.theme.default.css";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
 import axios from "axios";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 //  --- SUB-COMPONENT FOR OPTIMIZED COUNTDOWN ---
 
@@ -36,7 +38,6 @@ const Countdown = ({ expiryDate }) => {
     return () => clearInterval(interval);
   }, [expiryDate]);
 
-  // If there's no expiry date, don't render the countdown badge
   if (!expiryDate || timeLeft === "Expired") return null;
 
   return <div className="de_countdown">{timeLeft}</div>;
@@ -48,9 +49,23 @@ const NewItems = () => {
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
 
+  // 2. Initialize AOS when the component mounts
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // Animation speed
+      once: true,     // Animate only once while scrolling down
+    });
+  }, []);
+
+  // 3. Refresh AOS calculations whenever the DOM updates out of the loading state
+  useEffect(() => {
+    if (!loading) {
+      AOS.refresh();
+    }
+  }, [loading]);
+
   useEffect(() => {
     async function fetchNewItems() {
-      // Appended user ID condition safely if it exists, otherwise calls base API
       const url = id
         ? `https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems?userId=${id}`
         : `https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems`;
@@ -72,7 +87,7 @@ const NewItems = () => {
       0: { items: 1 },
       576: { items: 2 },
       768: { items: 3 },
-      1024: { items: 4 }, // Handles the 4 items layout cleanly
+      1024: { items: 4 },
     },
   };
 
@@ -81,7 +96,8 @@ const NewItems = () => {
       <section id="section-items" className="no-bottom">
         <div className="container">
           <div className="row">
-            <div className="col-lg-12">
+            {/* 4. Added AOS fade-up to the section header */}
+            <div className="col-lg-12" data-aos="fade-up">
               <div className="text-center">
                 <h2>New Items</h2>
                 <div className="small-border bg-color-2"></div>
@@ -90,7 +106,6 @@ const NewItems = () => {
 
             {loading ? (
               <>
-                {/* Renders 4 columns matching the desktop layout grid */}
                 {new Array(4).fill(0).map((_, index) => (
                   <div
                     className="col-lg-3 col-md-6 col-sm-12"
@@ -114,7 +129,7 @@ const NewItems = () => {
                           className="skeleton-loading nft__item_preview"
                           style={{
                             width: "100%",
-                            height: "100px", // Standard preview height
+                            height: "100px",
                             borderRadius: "8px",
                             backgroundColor: "#eee",
                           }}
@@ -164,7 +179,8 @@ const NewItems = () => {
                 ))}
               </>
             ) : (
-              <div className="col-lg-12">
+              /* 5. Added AOS fade-up properties to the carousel wrapper div */
+              <div className="col-lg-12" data-aos="fade-up" data-aos-delay="150">
                 {posts.length > 0 && (
                   <OwlCarousel className="owl-theme" {...options}>
                     {posts.map((post, index) => (
@@ -193,13 +209,13 @@ const NewItems = () => {
                               <button>Buy Now</button>
                               <div className="nft__item_share">
                                 <h4>Share</h4>
-                                <Link to={`/item-details/${post.nftId}`} target="_blank" rel="noreferrer">
+                                <Link to='/author' target="_blank" rel="noreferrer">
                                   <i className="fa fa-facebook fa-lg"></i>
                                 </Link>
-                                <Link to={`/item-details/${post.nftId}`} target="_blank" rel="noreferrer">
+                                <Link to='/author' target="_blank" rel="noreferrer">
                                   <i className="fa fa-twitter fa-lg"></i>
                                 </Link>
-                                <Link to={`/item-details/${post.nftId}`}>
+                                <Link to='/author'>
                                   <i className="fa fa-envelope fa-lg"></i>
                                 </Link>
                               </div>

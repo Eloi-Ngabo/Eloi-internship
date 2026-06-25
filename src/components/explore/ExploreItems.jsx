@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
 import axios from "axios";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const Countdown = ({ expiryDate }) => {
   const [timeLeft, setTimeLeft] = useState("");
@@ -31,21 +33,33 @@ const Countdown = ({ expiryDate }) => {
     return () => clearInterval(interval);
   }, [expiryDate]);
 
-  // If there's no expiry date, don't render the countdown badge
   if (!expiryDate || timeLeft === "Expired") return null;
 
   return <div className="de_countdown">{timeLeft}</div>;
 };
-
 
 const ExploreItems = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
 
-  // --- NEW STATES FOR FILTERING AND PAGINATION ---
   const [filter, setFilter] = useState("");
   const [visibleItems, setVisibleItems] = useState(8);
+
+  // 2. Initialize AOS when the component mounts
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // Animation speed
+      once: true,     // Animate only once while scrolling down
+    });
+  }, []);
+
+  // 3. Refresh AOS calculations when loading completes, filter shifts, or new items load
+  useEffect(() => {
+    if (!loading) {
+      AOS.refresh();
+    }
+  }, [loading, filter, visibleItems]);
 
   useEffect(() => {
     async function fetchExploreItems() {
@@ -58,16 +72,13 @@ const ExploreItems = () => {
     fetchExploreItems();
   }, [id]);
 
-  // Handle Load More clicks
   const handleLoadMore = (e) => {
-    e.preventDefault(); // Prevents empty Link routing behavior
-    setVisibleItems((prevValue) => prevValue + 4); // Loads 4 more items on each click
+    e.preventDefault(); 
+    setVisibleItems((prevValue) => prevValue + 4); 
   };
 
-  // --- FILTER & SORT LOGIC ---
-  // Create a processed copy of your posts based on the dropdown selection
   const getSortedPosts = () => {
-    let sorted = [...posts]; // Clone array to avoid mutating source state
+    let sorted = [...posts]; 
 
     if (filter === "price_low_to_high") {
       sorted.sort((a, b) => a.price - b.price);
@@ -81,13 +92,11 @@ const ExploreItems = () => {
   };
 
   const sortedPosts = getSortedPosts();
-  // Slice array from index 0 up to your visible state limit
   const Posts = sortedPosts.slice(0, visibleItems);
 
   return (
     <>
       <div>
-        {/* Filter event handler tied to select element */}
         <select 
           id="filter-items" 
           value={filter} 
@@ -172,13 +181,15 @@ const ExploreItems = () => {
           </div>
         ))
       ) : (
-        
-        /* 2. ACTUAL POSTS DATA STATE (Iterates through filtered & sliced elements) */
+        /* 2. ACTUAL POSTS DATA STATE */
         Posts.map((post, index) => (
           <div
             key={post.id || index}
             className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12"
             style={{ display: "block", backgroundSize: "cover" }}
+            // 4. Added AOS attributes to columns. Delay is dynamically mapped to stagger grid items 
+            data-aos="zoom-in"
+            data-aos-delay={(index % 4) * 100}
           >
             <div className="nft__item">
               <div className="author_list_pp">
@@ -187,7 +198,7 @@ const ExploreItems = () => {
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                 >
-                  <img className="lazy" src={AuthorImage} alt="" />
+                  <img className="lazy" src={post.authorImage || AuthorImage} alt="" />
                   <i className="fa fa-check"></i>
                 </Link>
               </div>
@@ -200,20 +211,20 @@ const ExploreItems = () => {
                     <button>Buy Now</button>
                     <div className="nft__item_share">
                       <h4>Share</h4>
-                      <Link to={`/author/${post.nftId}`} target="_blank" rel="noreferrer">
+                      <Link to='/author' target="_blank" rel="noreferrer">
                         <i className="fa fa-facebook fa-lg"></i>
                       </Link>
-                      <Link to={`/author/${post.nftId}`} target="_blank" rel="noreferrer">
+                      <Link to='/author' target="_blank" rel="noreferrer">
                         <i className="fa fa-twitter fa-lg"></i>
                       </Link>
-                      <Link to={`/author/${post.nftId}`}>
+                      <Link to='/author'>
                         <i className="fa fa-envelope fa-lg"></i>
                       </Link>
                     </div>
                   </div>
                 </div>
                 <Link to={`/item-details/${post.nftId}`}>
-                  <img src={nftImage} className="lazy nft__item_preview" alt="" />
+                  <img src={post.nftImage || nftImage} className="lazy nft__item_preview" alt="" />
                 </Link>
               </div>
               <div className="nft__item_info">
@@ -232,7 +243,6 @@ const ExploreItems = () => {
       )}
 
       {/* 3. DYNAMIC LOAD MORE ACTIONS */}
-      {/* Button only renders if there are more items left to display and we aren't loading */}
       {!loading && visibleItems < posts.length && (
         <div className="col-md-12 text-center">
           <Link to="" id="loadmore" className="btn-main lead" onClick={handleLoadMore}>
@@ -242,7 +252,6 @@ const ExploreItems = () => {
       )}
     </>
   );
-
-}
+};
 
 export default ExploreItems;

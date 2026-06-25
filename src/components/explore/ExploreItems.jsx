@@ -200,13 +200,13 @@ const ExploreItems = () => {
                     <button>Buy Now</button>
                     <div className="nft__item_share">
                       <h4>Share</h4>
-                      <Link to="/author" target="_blank" rel="noreferrer">
+                      <Link to={`/author/${post.nftId}`} target="_blank" rel="noreferrer">
                         <i className="fa fa-facebook fa-lg"></i>
                       </Link>
-                      <Link to="/author" target="_blank" rel="noreferrer">
+                      <Link to={`/author/${post.nftId}`} target="_blank" rel="noreferrer">
                         <i className="fa fa-twitter fa-lg"></i>
                       </Link>
-                      <Link to="/author">
+                      <Link to={`/author/${post.nftId}`}>
                         <i className="fa fa-envelope fa-lg"></i>
                       </Link>
                     </div>

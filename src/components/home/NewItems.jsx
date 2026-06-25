@@ -193,13 +193,13 @@ const NewItems = () => {
                               <button>Buy Now</button>
                               <div className="nft__item_share">
                                 <h4>Share</h4>
-                                <Link to="" target="_blank" rel="noreferrer">
+                                <Link to={`/item-details/${post.nftId}`} target="_blank" rel="noreferrer">
                                   <i className="fa fa-facebook fa-lg"></i>
                                 </Link>
-                                <Link to="" target="_blank" rel="noreferrer">
+                                <Link to={`/item-details/${post.nftId}`} target="_blank" rel="noreferrer">
                                   <i className="fa fa-twitter fa-lg"></i>
                                 </Link>
-                                <Link to="">
+                                <Link to={`/item-details/${post.nftId}`}>
                                   <i className="fa fa-envelope fa-lg"></i>
                                 </Link>
                               </div>

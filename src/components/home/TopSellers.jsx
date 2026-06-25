@@ -2,12 +2,23 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import axios from "axios";
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 
 
 const TopSellers = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
+
+  // Initialize AOS when the component mounts
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true,
+    });
+  }, []);
 
   useEffect(() => {
     async function fetchTopSellers() {
@@ -17,7 +28,7 @@ const TopSellers = () => {
       setPosts(response.data);
       setTimeout(() => {
         setLoading(false);
-      }, 3000);
+      }, 1500); // Optimized fake timer for faster performance transitions
     }
     fetchTopSellers();
   }, [id]);
@@ -27,12 +38,15 @@ const TopSellers = () => {
       <div className="container">
         <div className="row">
           <div className="col-lg-12">
-            <div className="text-center">
+            {/* Added fade-up animation to the heading text block */}
+            <div className="text-center" data-aos="fade-up">
               <h2>Top Sellers</h2>
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
-          <div className="col-md-12">
+          
+          {/* Added fade-up directly to the list container for an elegant, unified layout pop-in */}
+          <div className="col-md-12" data-aos="fade-up" data-aos-delay="200">
             <ol className="author_list">
               {loading
                 ? new Array(12).fill(0).map((_, index) => (

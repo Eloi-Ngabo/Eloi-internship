@@ -13,10 +13,11 @@ const ItemDetails = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    async function fetchItemDetails() {
+async function fetchItemDetails() {
       try {
         const response = await axios.get(`https://us-central1-nft-cloud-functions.cloudfunctions.net/itemDetails?nftId=${id}`);
         setPost(response.data);
+        console.log(response.data)
         setTimeout(() => {
           setLoading(false);
         }, 1000); 
@@ -27,6 +28,7 @@ const ItemDetails = () => {
     }
     fetchItemDetails();
   }, [id]); // Added id dependency array
+
 
   return (
     <div id="wrapper">

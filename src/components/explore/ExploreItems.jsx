@@ -50,7 +50,7 @@ const ExploreItems = () => {
   useEffect(() => {
     AOS.init({
       duration: 1000, // Animation speed
-      once: true,     // Animate only once while scrolling down
+      once: true, // Animate only once while scrolling down
     });
   }, []);
 
@@ -63,22 +63,24 @@ const ExploreItems = () => {
 
   useEffect(() => {
     async function fetchExploreItems() {
-        const response = await axios.get(`https://us-central1-nft-cloud-functions.cloudfunctions.net/explore?userId=${id}`);
-        setPosts(response.data);
-        setTimeout(() => {
-          setLoading(false);
-        }, 3000);
+      const response = await axios.get(
+        `https://us-central1-nft-cloud-functions.cloudfunctions.net/explore?userId=${id}`,
+      );
+      setPosts(response.data);
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
     }
     fetchExploreItems();
   }, [id]);
 
   const handleLoadMore = (e) => {
-    e.preventDefault(); 
-    setVisibleItems((prevValue) => prevValue + 4); 
+    e.preventDefault();
+    setVisibleItems((prevValue) => prevValue + 4);
   };
 
   const getSortedPosts = () => {
-    let sorted = [...posts]; 
+    let sorted = [...posts];
 
     if (filter === "price_low_to_high") {
       sorted.sort((a, b) => a.price - b.price);
@@ -87,7 +89,7 @@ const ExploreItems = () => {
     } else if (filter === "likes_high_to_low") {
       sorted.sort((a, b) => b.likes - a.likes);
     }
-    
+
     return sorted;
   };
 
@@ -97,9 +99,9 @@ const ExploreItems = () => {
   return (
     <>
       <div>
-        <select 
-          id="filter-items" 
-          value={filter} 
+        <select
+          id="filter-items"
+          value={filter}
           onChange={(e) => setFilter(e.target.value)}
         >
           <option value="">Default</option>
@@ -110,142 +112,153 @@ const ExploreItems = () => {
       </div>
 
       {/* 1. SKELETON LOADING STATE */}
-      {loading ? (
-        new Array(8).fill(0).map((_, index) => (
-          <div
-            className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12"
-            key={`item-skeleton-${index}`}
-            style={{ display: "block", backgroundSize: "cover" }}
-          >
-            <div className="nft__item" style={{ position: "relative" }}>
-              <div className="author_list_pp" style={{ zIndex: 2 }}>
-                <div
-                  className="skeleton-loading"
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                    borderRadius: "50%",
-                    backgroundColor: "#eee",
-                  }}
-                ></div>
-              </div>
+      {loading
+        ? new Array(8).fill(0).map((_, index) => (
+            <div
+              className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12"
+              key={`item-skeleton-${index}`}
+              style={{ display: "block", backgroundSize: "cover" }}
+            >
+              <div className="nft__item" style={{ position: "relative" }}>
+                <div className="author_list_pp" style={{ zIndex: 2 }}>
+                  <div
+                    className="skeleton-loading"
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      borderRadius: "50%",
+                      backgroundColor: "#eee",
+                    }}
+                  ></div>
+                </div>
 
-              <div className="nft__item_wrap">
-                <div
-                  className="skeleton-loading nft__item_preview"
-                  style={{
-                    width: "100%",
-                    height: "150px",
-                    borderRadius: "8px",
-                    backgroundColor: "#eee",
-                  }}
-                ></div>
-              </div>
+                <div className="nft__item_wrap">
+                  <div
+                    className="skeleton-loading nft__item_preview"
+                    style={{
+                      width: "100%",
+                      height: "150px",
+                      borderRadius: "8px",
+                      backgroundColor: "#eee",
+                    }}
+                  ></div>
+                </div>
 
-              <div className="nft__item_info" style={{ marginTop: "15px" }}>
-                <div
-                  className="skeleton-loading"
-                  style={{
-                    width: "70%",
-                    height: "18px",
-                    backgroundColor: "#eee",
-                    borderRadius: "4px",
-                    marginBottom: "10px",
-                  }}
-                ></div>
+                <div className="nft__item_info" style={{ marginTop: "15px" }}>
+                  <div
+                    className="skeleton-loading"
+                    style={{
+                      width: "70%",
+                      height: "18px",
+                      backgroundColor: "#eee",
+                      borderRadius: "4px",
+                      marginBottom: "10px",
+                    }}
+                  ></div>
 
-                <div
-                  className="skeleton-loading"
-                  style={{
-                    width: "40%",
-                    height: "14px",
-                    backgroundColor: "#eee",
-                    borderRadius: "4px",
-                  }}
-                ></div>
+                  <div
+                    className="skeleton-loading"
+                    style={{
+                      width: "40%",
+                      height: "14px",
+                      backgroundColor: "#eee",
+                      borderRadius: "4px",
+                    }}
+                  ></div>
 
-                <div
-                  className="nft__item_like skeleton-loading"
-                  style={{
-                    width: "35px",
-                    height: "15px",
-                    backgroundColor: "#eee",
-                    borderRadius: "4px",
-                    position: "absolute",
-                    bottom: "20px",
-                    right: "20px",
-                  }}
-                ></div>
+                  <div
+                    className="nft__item_like skeleton-loading"
+                    style={{
+                      width: "35px",
+                      height: "15px",
+                      backgroundColor: "#eee",
+                      borderRadius: "4px",
+                      position: "absolute",
+                      bottom: "20px",
+                      right: "20px",
+                    }}
+                  ></div>
+                </div>
               </div>
             </div>
-          </div>
-        ))
-      ) : (
-        /* 2. ACTUAL POSTS DATA STATE */
-        Posts.map((post, index) => (
-          <div
-            key={post.id || index}
-            className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12"
-            style={{ display: "block", backgroundSize: "cover" }}
-            // 4. Added AOS attributes to columns. Delay is dynamically mapped to stagger grid items 
-            data-aos="zoom-in"
-            data-aos-delay={(index % 4) * 100}
-          >
-            <div className="nft__item">
-              <div className="author_list_pp">
-                <Link
-                  to={`/author/${post.authorId || id}`}
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                >
-                  <img className="lazy" src={post.authorImage || AuthorImage} alt="" />
-                  <i className="fa fa-check"></i>
-                </Link>
-              </div>
+          ))
+        : /* 2. ACTUAL POSTS DATA STATE */
+          Posts.map((post, index) => (
+            <div
+              key={post.id || index}
+              className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12"
+              style={{ display: "block", backgroundSize: "cover" }}
+              // 4. Added AOS attributes to columns. Delay is dynamically mapped to stagger grid items
+              data-aos="zoom-in"
+              data-aos-delay={(index % 4) * 100}
+            >
+              <div className="nft__item">
+                <div className="author_list_pp">
+                  <Link
+                    to={`/author/${post.authorId || id}`}
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                  >
+                    <img
+                      className="lazy"
+                      src={post.authorImage || AuthorImage}
+                      alt=""
+                    />
+                    <i className="fa fa-check"></i>
+                  </Link>
+                </div>
 
-              <Countdown expiryDate={post.expiryDate} />
+                <Countdown expiryDate={post.expiryDate} />
 
-              <div className="nft__item_wrap">
-                <div className="nft__item_extra">
-                  <div className="nft__item_buttons">
-                    <button>Buy Now</button>
-                    <div className="nft__item_share">
-                      <h4>Share</h4>
-                      <Link to='/author' target="_blank" rel="noreferrer">
-                        <i className="fa fa-facebook fa-lg"></i>
-                      </Link>
-                      <Link to='/author' target="_blank" rel="noreferrer">
-                        <i className="fa fa-twitter fa-lg"></i>
-                      </Link>
-                      <Link to='/author'>
-                        <i className="fa fa-envelope fa-lg"></i>
-                      </Link>
+                <div className="nft__item_wrap">
+                  <div className="nft__item_extra">
+                    <div className="nft__item_buttons">
+                      <button>Buy Now</button>
+                      <div className="nft__item_share">
+                        <h4>Share</h4>
+                        <Link to="/author" target="_blank" rel="noreferrer">
+                          <i className="fa fa-facebook fa-lg"></i>
+                        </Link>
+                        <Link to="/author" target="_blank" rel="noreferrer">
+                          <i className="fa fa-twitter fa-lg"></i>
+                        </Link>
+                        <Link to="/author">
+                          <i className="fa fa-envelope fa-lg"></i>
+                        </Link>
+                      </div>
                     </div>
                   </div>
+                  <Link to={`/item-details/${post.nftId}`}>
+                    <img
+                      src={post.nftImage || nftImage}
+                      className="lazy nft__item_preview"
+                      alt=""
+                    />
+                  </Link>
                 </div>
-                <Link to={`/item-details/${post.nftId}`}>
-                  <img src={post.nftImage || nftImage} className="lazy nft__item_preview" alt="" />
-                </Link>
-              </div>
-              <div className="nft__item_info">
-                <Link to={`/item-details/${post.nftId}`}>
-                  <h4>{post.title}</h4>
-                </Link>
-                <div className="nft__item_price">{post.price}</div>
-                <div className="nft__item_like">
-                  <i className="fa fa-heart"></i>
-                  <span>{post.likes}</span>
+                <div className="nft__item_info">
+                  <Link to={`/item-details/${post.nftId}`}>
+                    <h4>{post.title}</h4>
+                  </Link>
+                  <div className="nft__item_price">{post.price}</div>
+                  <div className="nft__item_like">
+                    <i className="fa fa-heart"></i>
+                    <span>{post.likes}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))
-      )}
+          ))}
 
       {/* 3. DYNAMIC LOAD MORE ACTIONS */}
       {!loading && visibleItems < posts.length && (
         <div className="col-md-12 text-center">
-          <Link to="" id="loadmore" className="btn-main lead" onClick={handleLoadMore}>
+          <Link
+            to=""
+            id="loadmore"
+            className="btn-main lead"
+            onClick={handleLoadMore}
+          >
             Load more
           </Link>
         </div>

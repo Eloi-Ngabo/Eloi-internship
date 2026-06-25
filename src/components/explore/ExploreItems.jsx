@@ -56,7 +56,7 @@ const ExploreItems = () => {
   useEffect(() => {
     AOS.init({
       duration: 800,
-      once: true,
+      once: false,
     });
   }, []);
 

@@ -62,7 +62,7 @@ const ItemDetails = () => {
                 <div className="row">
                   <div className="col-md-6 text-center">
                     <img
-                      src={post.nftImage}
+                      src={nftImage}
                       className="img-fluid img-rounded mb-sm-30 nft-image"
                       alt=""
                     />
@@ -119,7 +119,7 @@ const ItemDetails = () => {
                         <div className="spacer-40"></div>
                         <h6>Price</h6>
                         <div className="nft-item-price">
-                          <img src={post.EthImage} alt="" />
+                          <img src={EthImage} alt="" />
                           <span>{post.price}</span>
                         </div>
                       </div>

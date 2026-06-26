@@ -66,11 +66,7 @@ const NewItems = () => {
 
   useEffect(() => {
     async function fetchNewItems() {
-      const url = id
-        ? `https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems?userId=${id}`
-        : `https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems`;
-
-      const { data } = await axios.get(url);
+      const { data } = await axios.get(`https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems?userId${id}`);
       setPosts(data);
       setTimeout(() => {
         setLoading(false);
